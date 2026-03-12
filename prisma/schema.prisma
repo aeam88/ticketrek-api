@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  hashedRt  String?
+  role      Role
+  events    Event[]
+  tickets   Ticket[]
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  capacity    Int
+  date        DateTime
+  organizerId String
+  organizer   User @relation(fields: [organizerId], references: [id])
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id        String @id @default(uuid())
+  eventId   String
+  userId    String
+  qrCode    String
+  status    TicketStatus
+  event     Event @relation(fields: [eventId], references: [id])
+  user      User  @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id        String @id @default(uuid())
+  ticketId  String
+  stripeId  String
+  status    PaymentStatus
+}
+
+enum Role {
+  ADMIN
+  ORGANIZER
+  USER
+}
+
+enum TicketStatus {
+  VALID
+  USED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
