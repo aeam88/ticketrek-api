@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { EventsModule } from './events/events.module';
+import { TicketsModule } from './tickets/tickets.module';
 
 
 
@@ -15,7 +16,8 @@ import { EventsModule } from './events/events.module';
     PrismaModule,
     AuthModule,
     UsersModule,
-    EventsModule
+    EventsModule,
+    TicketsModule
 
   ],
   controllers: [AppController],

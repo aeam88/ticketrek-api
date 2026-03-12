@@ -38,12 +38,12 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const data = { ...updateUserDto };
-    
+
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
-    
-    // Simple check if user exists
+
+
     await this.findOne(id);
 
     return this.prisma.user.update({
