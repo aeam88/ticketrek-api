@@ -72,6 +72,15 @@ Todos los endpoints tienen el prefijo global: `/api/v1`
 | `PATCH` | `/:id` | Admin | Actualizar un usuario por ID |
 | `DELETE` | `/:id` | Admin | Eliminar un usuario |
 
+### Eventos (`/api/v1/events`)
+| Método | Ruta | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/` | Organizer/Admin | Crear un nuevo evento |
+| `GET` | `/` | Público | Listar todos los eventos |
+| `GET` | `/:id` | Público | Ver detalle de un evento |
+| `PATCH` | `/:id` | Owner/Admin | Actualizar un evento |
+| `DELETE` | `/:id` | Owner/Admin | Eliminar un evento |
+
 ## 📂 Estructura del Proyecto
 
 ```text
