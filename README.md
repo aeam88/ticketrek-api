@@ -10,6 +10,7 @@ API robusta y escalable construida con **NestJS** para la gestión de eventos, u
 - **Autenticación:** Passport JWT (Access & Refresh Tokens)
 - **Validación:** Class-validator & Class-transformer
 - **Seguridad:** Bcrypt para hashing de contraseñas
+- **Tickets:** Sistema de compra y validación de tickets con códigos QR
 
 ## 🛠️ Instalación
 
@@ -80,6 +81,15 @@ Todos los endpoints tienen el prefijo global: `/api/v1`
 | `GET` | `/:id` | Público | Ver detalle de un evento |
 | `PATCH` | `/:id` | Owner/Admin | Actualizar un evento |
 | `DELETE` | `/:id` | Owner/Admin | Eliminar un evento |
+| `GET` | `/:id/tickets` | Owner/Admin | Ver tickets vendidos para un evento |
+
+### Tickets (`/api/v1/tickets`)
+| Método | Ruta | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/buy` | User/Admin | Comprar un ticket para un evento |
+| `GET` | `/my` | User/Admin | Listar mis tickets comprados |
+| `GET` | `/event/:eventId`| Owner/Admin | Listar tickets de un evento específico |
+| `PATCH` | `/:id/use` | Admin/Staff | Validar/Usar un ticket |
 
 ## 📂 Estructura del Proyecto
 
@@ -87,6 +97,8 @@ Todos los endpoints tienen el prefijo global: `/api/v1`
 src/
 ├── auth/           # Lógica de autenticación y estrategias JWT
 ├── users/          # Gestión de usuarios y perfiles
+├── events/         # Gestión de eventos y organización
+├── tickets/        # Compra y validación de tickets
 ├── prisma/         # Configuración y servicio de Prisma
 ├── common/         # Decoradores, guards y utilidades compartidas
 ├── app.module.ts   # Módulo raíz de la aplicación
