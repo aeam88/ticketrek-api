@@ -4,4 +4,7 @@ export class BuyTicketDto {
   @IsNotEmpty()
   @IsString()
   eventId: string;
+
+  @IsString()
+  paymentMethod?: string;
 }
