@@ -24,6 +24,7 @@ model Event {
   title       String
   description String
   capacity    Int
+  price       Float    @default(0)
   date        DateTime
   organizerId String
   organizer   User @relation(fields: [organizerId], references: [id])
@@ -41,10 +42,14 @@ model Ticket {
 }
 
 model Payment {
-  id        String @id @default(uuid())
-  ticketId  String
-  stripeId  String
-  status    PaymentStatus
+  id              String   @id @default(uuid())
+  ticketId        String
+  mercadopagoId   String?
+  amount          Float
+  currency        String   @default("ARS")
+  status          PaymentStatus
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 enum Role {
@@ -54,6 +59,7 @@ enum Role {
 }
 
 enum TicketStatus {
+  PENDING
   VALID
   USED
 }

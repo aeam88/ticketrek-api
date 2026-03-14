@@ -1,11 +1,15 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BuyTicketDto } from './dto/buy-ticket.dto';
 import { TicketStatus } from '@prisma/client';
+import { PaymentsService } from '../payments/payments.service';
 
 @Injectable()
 export class TicketsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private paymentsService: PaymentsService,
+  ) {}
 
   async buyTicket(userId: string, dto: BuyTicketDto) {
     const event = await this.prisma.event.findUnique({
@@ -25,17 +29,42 @@ export class TicketsService {
       throw new ForbiddenException('Event is sold out');
     }
 
+    if (event.price > 0 && !dto.paymentMethod) {
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     const qrCode = Buffer.from(`${userId}-${dto.eventId}-${Date.now()}`).toString('base64');
 
-    return this.prisma.ticket.create({
+    const ticket = await this.prisma.ticket.create({
       data: {
         eventId: dto.eventId,
         userId: userId,
         qrCode: qrCode,
-        status: TicketStatus.VALID,
+        status: event.price > 0 ? TicketStatus.PENDING : TicketStatus.VALID,
       },
     });
+
+    if (event.price > 0) {
+      const preference = await this.paymentsService.createPreference(
+        ticket.id,
+        event.title,
+        event.price,
+        user.email,
+      );
+      return {
+        ticket,
+        payment_url: preference.init_point,
+      };
+    }
+
+    return ticket;
   }
 
   async getMyTickets(userId: string) {
