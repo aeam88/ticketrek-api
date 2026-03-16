@@ -8,13 +8,19 @@ import { UsersModule } from './users/users.module';
 import { EventsModule } from './events/events.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { PaymentsModule } from './payments/payments.module';
+import { HealthModule } from './common/health/health.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { APP_GUARD } from '@nestjs/core';
 
+import { envValidationSchema } from './common/config/env-validation.config';
+
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: envValidationSchema,
+    }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
@@ -38,7 +44,8 @@ import { APP_GUARD } from '@nestjs/core';
     UsersModule,
     EventsModule,
     TicketsModule,
-    PaymentsModule
+    PaymentsModule,
+    HealthModule
 
   ],
   controllers: [AppController],

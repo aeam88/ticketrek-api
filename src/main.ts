@@ -2,13 +2,23 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { WinstonModule } from 'nest-winston';
+import { loggerConfig } from './common/config/logger.config';
 import helmet from 'helmet';
+import compression from 'compression';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(loggerConfig),
+  });
   app.setGlobalPrefix('api/v1');
 
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+  }));
+  app.use(compression());
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Configuración de Swagger
   const config = new DocumentBuilder()
@@ -32,7 +42,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: '*',
+    origin: process.env.FRONTEND_URL || '*',
     credentials: true,
   });
 
